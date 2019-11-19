@@ -1,0 +1,48 @@
+{
+    "name": "the-module",
+    "version": "0.0.0",
+    "description": "My awesome module.",
+    "repository": "https://github.com/Richienb/the-module.git",
+    "author": "Richie Bendall <richiebendall@gmail.com>",
+    "license": "MIT",
+    "main": "dist/index.js",
+    "files": [
+        "src/**/*",
+        "dist/**/*"
+    ],
+    "engines": {
+        "node": ">=8"
+    },
+    "scripts": {
+        "docs": "typedoc",
+        "build": "tsc && yarn docs",
+        "dev": "yarn build --watch",
+        "lint": "xo",
+        "test": "yarn lint && ava"
+    },
+    "keywords": [],
+    "dependencies": {},
+    "devDependencies": {
+        "ava": "^2.1.0",
+        "eslint-config-richienb": "^0.2.3",
+        "ts-node": "^8.5.0",
+        "typedoc": "^0.15.1",
+        "typescript": "^3.7.2",
+        "xo": "^0.25.3"
+    },
+    "resolutions": {
+        "eslint": "^6.6.0"
+    },
+    "xo": {
+        "extends": "richienb/ts"
+    },
+    "ava": {
+        "compileEnhancements": false,
+        "extensions": [
+            "ts"
+        ],
+        "require": [
+            "ts-node/register"
+        ]
+    }
+}
