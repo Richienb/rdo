@@ -1,13 +1,7 @@
 import test from "ava"
-import theModule from "./src"
+import Rdo from "./src"
 
-test("main", (t) => {
-    t.throws(() => {
-        theModule(123)
-    }, {
-        instanceOf: TypeError,
-        message: "Expected a string, got number",
-    })
-
-    t.is(theModule("unicorns"), "unicorns & rainbows")
+test("main", async (t) => {
+    const random = new Rdo()
+    t.true([1, 2].includes((await random.integer({ min: 1, max: 2 }))[0]))
 })
