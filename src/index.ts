@@ -24,12 +24,12 @@ export default class Rdo {
         */
         credentials?: {
             /**
-             * A string containing the login (username) associated with the client's RANDOM.ORG account.
+             * The login (username) associated with the client's RANDOM.ORG account.
             */
             login: string,
 
             /**
-             * A string containing the password associated with the client's RANDOM.ORG account.
+             * The password associated with the client's RANDOM.ORG account.
             */
             password: string
         } | {
@@ -43,6 +43,10 @@ export default class Rdo {
             if (isValidKey(this.auth.apiKey)) this.isAuthed = true
             else throw new TypeError("API Key must be a valid v4 UUID.")
         }
+    }
+
+    private mustBeAuthed(): void {
+        if (!this.isAuthed) throw new ReferenceError("API key required to use this function!")
     }
 
     /**
@@ -91,8 +95,7 @@ export default class Rdo {
                     base,
                 }
             })
-        }
-        else {
+        } else {
             if (unique) console.warn("Uniqueness not supported without API key.")
             return await reqBase("integers", {
                 data: {
@@ -119,17 +122,17 @@ export default class Rdo {
         base = 10
     }: {
         /**
-         * This parameter specifies the lower boundaries of the sequences requested. For uniform sequences, min must be an integer in the [-1000000000,1000000000] range. For multiform sequences, min can be an array with n integers, each specifying the lower boundary of the sequence identified by its index. In this case, each value in min must be within the [-1000000000,1000000000] range.
+         * The lower boundaries of the sequences requested. For uniform sequences, min must be an integer in the [-1000000000,1000000000] range. For multiform sequences, min can be an array with n integers, each specifying the lower boundary of the sequence identified by its index. In this case, each value in min must be within the [-1000000000,1000000000] range.
         */
         min: integer | integer[],
 
         /**
-         * This parameter specifies the upper boundaries of the sequences requested. For uniform sequences, max must be an integer in the [-1000000000,1000000000] range. For multiform sequences, max can be an array with n integers, each specifying the upper boundary of the sequence identified by its index. In this case, each value in max must be within the [-1000000000,1000000000] range.
+         * The upper boundaries of the sequences requested. For uniform sequences, max must be an integer in the [-1000000000,1000000000] range. For multiform sequences, max can be an array with n integers, each specifying the upper boundary of the sequence identified by its index. In this case, each value in max must be within the [-1000000000,1000000000] range.
         */
         max: integer | integer[],
 
         /**
-         * An integer specifying the number of sequences requested. Must be within the [1,1000] range.
+         * The number of sequences requested. Must be within the [1,1000] range.
         */
         amount?: integer,
 
@@ -148,32 +151,52 @@ export default class Rdo {
         */
         base?: supportedBases | supportedBases[]
     }) {
-        if (this.isAuthed) {
-            return await reqAPI("generateIntegerSequences", {
-                data: {
-                    apiKey: this.auth.apiKey,
-                    n: amount,
-                    length,
-                    min,
-                    max,
-                    replacement: !unique,
-                    base
-                }
-            })
-        } else {
-            if (unique) console.warn("Uniqueness not supported without API key.")
-            if (base) console.warn("Base not supported without API key.")
-            return await reqBase("sequences", {
-                data: {
-                    min,
-                    max,
-                    col: amount
-                }
-            })
-        }
+        this.mustBeAuthed()
+
+        return await reqAPI("generateIntegerSequences", {
+            data: {
+                apiKey: this.auth.apiKey,
+                n: amount,
+                length,
+                min,
+                max,
+                replacement: !unique,
+                base
+            }
+        })
     }
 
-    public async quota() {
+    public async quota(): Promise<integer | {
+        /**
+         * If the API key is running. An API key must be running for it to be able to serve requests.
+        */
+        running: boolean,
+
+        /**
+         * The timestamp in [ISO 8601](http://en.wikipedia.org/wiki/ISO_8601) format at which the API key was created.
+        */
+        creationTime: Date,
+
+        /**
+         * The (estimated) number of remaining true random bits available to the client.
+        */
+        bitsLeft: integer,
+
+        /**
+         * The (estimated) number of remaining API requests available to the client.
+        */
+        requestsLeft: integer,
+
+        /**
+         * The number of bits used by this API key since it was created.
+        */
+        totalBits: integer,
+
+        /**
+         * The number of requests used by this API key since it was created.
+        */
+        totalRequests: integer
+    }> {
         if (this.isAuthed) {
             const { status, creationTime, bitsLeft, requestsLeft, totalBits, totalRequests } = await reqAPI("getUsage", {
                 data: {
@@ -193,7 +216,7 @@ export default class Rdo {
             const res = await reqBase("quota", {
                 convertToNumber: true
             })
-            return res
+            return res[0]
         }
     }
 }

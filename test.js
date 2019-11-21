@@ -11,15 +11,13 @@ test("unauthed: integer", async (t) => {
 })
 
 test("authed: integer", async (t) => {
-    t.true([1, 2].includes((await authed.integer({ min: 1, max: 2 }))[0]))
+    t.true([1, 2, 3, 4, 5].includes((await authed.integer({ min: 1, max: 5 }))[0]))
 })
 
 test("unauthed: quota", async (t) => {
-    console.log(await unauthed.quota())
-    t.pass()
+    t.is(typeof (await unauthed.quota()), "number")
 })
 
 test("authed: quota", async (t) => {
-    console.log(await authed.quota())
-    t.pass()
+    t.deepEqual(Object.keys(await authed.quota()), ["running", "creationTime", "bitsLeft", "requestsLeft", "totalBits", "totalRequests"])
 })
