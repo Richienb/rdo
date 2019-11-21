@@ -23,12 +23,14 @@
     "keywords": [],
     "dependencies": {
         "bluebird": "^3.7.1",
+        "is-uuid": "^1.0.2",
         "ky": "^0.16.0",
         "ky-universal": "^0.3.0",
         "lodash": "^4.17.15",
         "to-bluebird": "^1.0.2"
     },
     "devDependencies": {
+        "@types/bluebird": "^3.5.29",
         "@types/lodash": "^4.14.149",
         "ava": "^2.1.0",
         "eslint-config-richienb": "^0.2.3",
