@@ -29,7 +29,7 @@
         "ky": "^0.16.0",
         "ky-universal": "^0.3.0",
         "lodash": "^4.17.15",
-        "put-after": "^1.0.0"
+        "put-after": "^1.0.1"
     },
     "devDependencies": {
         "@types/atob": "^2.1.2",

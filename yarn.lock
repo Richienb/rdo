@@ -3787,10 +3787,10 @@ punycode@^2.1.0:
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-2.1.1.tgz#b58b010ac40c22c5657616c8d2c2c02c7bf479ec"
   integrity sha512-XRsRjdf+j5ml+y/6GKHPZbrF/8p2Yga0JPtdqTIY2Xe5ohJPD9saDJJLPvp9+NSBprVvevdXZybnj2cv8OEd0A==
 
-put-after@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/put-after/-/put-after-1.0.0.tgz#4838d9a35fd9c92e937b8b98ef34e39923a4da4b"
-  integrity sha512-Q3USriGGgRw2lwhpzCx6k4DVLqa6nSpkk6gOF0+NAzkOr8xP1X/NVogbrfdYEIA2WopO3nuy5dOAFJNtVbeQlw==
+put-after@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/put-after/-/put-after-1.0.1.tgz#d5d53bb2fd5f9288f0a3f3b41fbbb15723c717af"
+  integrity sha512-ZHXApfJ/SbY8ZnNpwfv+cVo5AUriSAs0XwHhfi8QVZKHi69Y8fAbqBrUMMGDD+lhnZzQDKSRtwAP2cFwPY3zGg==
   dependencies:
     lodash "^4.17.15"
     string-splice "^1.3.0"
