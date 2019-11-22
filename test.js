@@ -21,3 +21,15 @@ test("unauthed: quota", async (t) => {
 test("authed: quota", async (t) => {
     t.deepEqual(Object.keys(await authed.quota()), ["running", "creationTime", "bitsLeft", "requestsLeft", "totalBits", "totalRequests"])
 })
+
+test("authed: sequence", async (t) => {
+    t.is(typeof (await authed.sequence({ min: 0, max: 10 }))[0][0], "number")
+})
+
+test("unauthed: string", async (t) => {
+    t.is(typeof (await unauthed.string())[0], "string")
+})
+
+test("authed: string", async (t) => {
+    t.is(typeof (await authed.string())[0], "string")
+})

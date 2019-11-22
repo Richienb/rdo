@@ -1358,6 +1358,11 @@ end-of-stream@^1.1.0:
   dependencies:
     once "^1.4.0"
 
+english-chars@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/english-chars/-/english-chars-1.0.1.tgz#807aaf1cdfa60e861af4179f6dc2a608faaa4c23"
+  integrity sha512-yu3JTSasEFgf6rZveEQ/92qmaYvu8QGQQUR/yQ/oP/DL+IjEKD0qJWfv8Tyd2t4uYFq7UaUkwPk8h2xVcxJkGA==
+
 enhance-visitors@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/enhance-visitors/-/enhance-visitors-1.0.0.tgz#aa945d05da465672a1ebd38fee2ed3da8518e95a"

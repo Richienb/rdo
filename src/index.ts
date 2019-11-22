@@ -1,5 +1,8 @@
 "use strict"
 
+import englishChars from "english-chars"
+import _ from "lodash"
+
 import { reqAPI, reqBase } from "./request"
 import isValidKey from "./lib/validate-api-key"
 import { integer } from "./externals"
@@ -164,6 +167,57 @@ export default class Rdo {
                 base
             }
         })
+    }
+
+    public async string({
+        amount = 1,
+        length = 1,
+        characters = englishChars.all,
+        unique = false
+    }: {
+        /**
+         * How many random strings you need. Must be within the [1,10000] range.
+        */
+        amount?: integer,
+
+        /**
+         * The length of each string. Must be within the [1,32] range. All strings will be of the same length
+        */
+        length?: integer,
+
+        /**
+         * A set of characters that are allowed to occur in the random strings. The maximum number of characters is 128.
+        */
+        characters?: string | string[]
+
+        /**
+         * Specifies whether the random strings should be picked with replacement. The default (false) will cause the strings to be picked with replacement, i.e., the resulting list of strings may contain duplicates (like a series of dice rolls). If you want the strings to be unique (like raffle tickets drawn from a container), set this value to true.
+        */
+        unique?: boolean,
+    } = {}) {
+        if (_.isArray(characters)) characters = characters.join("")
+        if (this.isAuthed) {
+            return await reqAPI("generateStrings", {
+                data: {
+                    apiKey: this.auth.apiKey,
+                    n: amount,
+                    length,
+                    characters,
+                    replacement: !unique
+                }
+            })
+        } else {
+            return await reqBase("strings", {
+                data: {
+                    num: amount,
+                    len: length,
+                    digits: characters.includes(englishChars.digits) ? "on" : "off",
+                    upperalpha: characters.includes(englishChars.uppercase) ? "on" : "off",
+                    loweralpha: characters.includes(englishChars.lowercase) ? "on" : "off",
+                    unique: unique ? "on" : "off",
+                }
+            })
+        }
     }
 
     public async quota(): Promise<integer | {
