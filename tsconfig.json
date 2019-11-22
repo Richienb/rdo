@@ -4,9 +4,6 @@
         "sourceMap": true,
         "declaration": true,
         "outDir": "dist/",
-        "target": "es5"
-    },
-    "include": [
-        "src/**/*"
-    ]
+        "target": "es5",
+    }
 }

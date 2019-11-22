@@ -5,7 +5,8 @@ import _ from "lodash"
 
 import { reqAPI, reqBase } from "./request"
 import isValidKey from "./lib/validate-api-key"
-import { integer } from "./externals"
+import { integer, decimal } from "./externals"
+import b64ToBlob from "./lib/b64-to-blob"
 
 type supportedBases = 2 | 8 | 10 | 16
 
@@ -17,6 +18,11 @@ export default class Rdo {
     private readonly isAuthed: boolean = false
 
     constructor(private readonly auth: {
+        /**
+         * A Random.org [API key](https://api.random.org/api-keys).
+        */
+        signed?: boolean,
+
         /**
          * A Random.org [API key](https://api.random.org/api-keys).
         */
@@ -96,7 +102,8 @@ export default class Rdo {
                     max,
                     replacement: !unique,
                     base,
-                }
+                },
+                signed: this.auth.signed
             })
         } else {
             if (unique) console.warn("Uniqueness not supported without API key.")
@@ -111,6 +118,38 @@ export default class Rdo {
                 convertToNumber: true
             })
         }
+    }
+
+    public async decimal({
+        amount = 1,
+        places = 14,
+        unique = false
+    }: {
+        /**
+         * How many random decimal fractions you need. Must be within the [1,10000] range.
+        */
+        amount?: number,
+
+        /**
+         * The number of decimal places to use. Must be within the [1,14] range.
+        */
+        places?: number,
+
+        /**
+         * Specifies whether the random numbers should be picked with replacement. The default (false) will cause the numbers to be picked with replacement, i.e., the resulting numbers may contain duplicate values (like a series of dice rolls). If you want the numbers picked to be unique (like raffle tickets drawn from a container), set this value to true.
+        */
+        unique?: boolean
+    }): Promise<decimal[]> {
+        this.mustBeAuthed()
+
+        return await reqAPI("generateDecimalFractions", {
+            data: {
+                n: amount,
+                decimalPlaces: places,
+                replace: !unique
+            },
+            signed: this.auth.signed
+        })
     }
 
     /**
@@ -153,7 +192,7 @@ export default class Rdo {
          * Specifies the base that will be used to display the numbers. This affects the JSON types and formatting of the resulting data.
         */
         base?: supportedBases | supportedBases[]
-    }) {
+    }): Promise<Array<number[]>> {
         this.mustBeAuthed()
 
         return await reqAPI("generateIntegerSequences", {
@@ -165,7 +204,8 @@ export default class Rdo {
                 max,
                 replacement: !unique,
                 base
-            }
+            },
+            signed: this.auth.signed
         })
     }
 
@@ -204,7 +244,8 @@ export default class Rdo {
                     length,
                     characters,
                     replacement: !unique
-                }
+                },
+                signed: this.auth.signed
             })
         } else {
             return await reqBase("strings", {
@@ -218,6 +259,34 @@ export default class Rdo {
                 }
             })
         }
+    }
+
+    public async blob({
+        amount = 1,
+        size = 8,
+    }: {
+        /**
+         * How many random blobs you need. Must be within the [1,100] range.
+        */
+        amount?: number,
+
+        /**
+         * The size of each blob, measured in bits. Must be within the [1,1048576] range and must be divisible by 8.
+        */
+        size?: number,
+    }): Promise<Blob[]> {
+        this.mustBeAuthed()
+
+        const data = await reqAPI("generateBlobs", {
+            data: {
+                n: amount,
+                size,
+                format: "base64"
+            },
+            signed: this.auth.signed
+        })
+
+        return data.map((val: string) => b64ToBlob(val))
     }
 
     public async quota(): Promise<integer | {

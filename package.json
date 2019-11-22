@@ -22,13 +22,18 @@
     },
     "keywords": [],
     "dependencies": {
+        "atob": "^2.1.2",
+        "cross-blob": "^1.1.0",
         "english-chars": "^1.0.1",
         "is-uuid": "^1.0.2",
         "ky": "^0.16.0",
         "ky-universal": "^0.3.0",
-        "lodash": "^4.17.15"
+        "lodash": "^4.17.15",
+        "put-after": "^1.0.0"
     },
     "devDependencies": {
+        "@types/atob": "^2.1.2",
+        "@types/is-uuid": "^1.0.0",
         "@types/lodash": "^4.14.149",
         "ava": "^2.1.0",
         "eslint-config-richienb": "^0.2.3",

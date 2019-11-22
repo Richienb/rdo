@@ -1,10 +1,13 @@
 import ky from "ky-universal"
 import _ from "lodash"
+import putAfter from "put-after"
 
 /**
  * Ky interface to the Random.org v2 JSON RPC API.
 */
-export async function reqAPI(method: string, { data, getRandomData = true }: { data?: object, getRandomData?: boolean }) {
+export async function reqAPI(method: string, { data, getRandomData = true, signed = false }: { data?: object, getRandomData?: boolean, signed?: boolean }) {
+    const shouldSign = signed && method.startsWith("generate") && (data as any).apiKey
+    if (shouldSign) method = putAfter(method, "generate", "Signed")
     const res = await ky.post("https://api.random.org/json-rpc/2/invoke", {
         json: {
             jsonrpc: "2.0",
@@ -14,6 +17,15 @@ export async function reqAPI(method: string, { data, getRandomData = true }: { d
         }
     });
     const { result } = await res.json();
+    if (shouldSign) {
+        return await reqAPI("getResult", {
+            data: {
+                apiKey: (data as any).apiKey,
+                serialNumber: result.random.serialNumber
+            },
+            getRandomData
+        })
+    }
     return getRandomData ? result.random.data : result
 }
 
