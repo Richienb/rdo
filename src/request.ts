@@ -26,11 +26,12 @@ export async function reqAPI(method: string, { data, getRandomData = true, signe
             getRandomData
         })
     }
+    if (getRandomData && !result.random) return undefined
     return getRandomData ? result.random.data : result
 }
 
-export async function reqBase(method: string, { data, convertToNumber }: { data?: object, convertToNumber?: true }): Promise<number[]>
 export async function reqBase(method: string, { data, convertToNumber }: { data?: object, convertToNumber?: false }): Promise<string[]>
+export async function reqBase(method: string, { data, convertToNumber }: { data?: object, convertToNumber?: true }): Promise<number[]>
 
 /**
  * Ky interface to the Random.org public API.

@@ -1,43 +1,32 @@
-# The module [![Travis CI Build Status](https://img.shields.io/travis/com/Richienb/the-module/master.svg?style=for-the-badge)](https://travis-ci.com/Richienb/the-module)
+# Rdo [![Travis CI Build Status](https://img.shields.io/travis/com/Richienb/rdo/master.svg?style=for-the-badge)](https://travis-ci.com/Richienb/rdo)
 
-My awesome module.
+Random.org API client library for JavaScript.
 
-[![NPM Badge](https://nodei.co/npm/the-module.png)](https://npmjs.com/package/the-module)
+[![NPM Badge](https://nodei.co/npm/rdo.png)](https://npmjs.com/package/rdo)
+
+## Why?
+
+- Simple syntax.
+- Response normalisation.
+- Sensible defaults.
 
 ## Install
 
 ```sh
-npm install the-module
+npm install rdo
 ```
 
 ## Usage
 
 ```js
-const theModule = require("the-module");
+const Rdo = require("rdo");
 
-theModule("unicorns");
-//=> 'unicorns & rainbows'
+const random = new Rdo({ apiKey: "Some api key" });
+
+random.integer({ min: 0, max: 10 }).then(console.log);
+// 6
 ```
 
 ## API
 
-For more information, see the [documentation](https://richienb.github.io/the-module).
-
-### theModule(input, options?)
-
-#### input
-
-Type: `string`
-
-Lorem ipsum.
-
-#### options
-
-Type: `object`
-
-##### postfix
-
-Type: `string`\
-Default: `rainbows`
-
-Lorem ipsum.
+See the [documentation](https://richienb.github.io/rdo).
