@@ -16,7 +16,8 @@ export async function reqAPI(method: string, { data, getRandomData = true, signe
             id: 0
         }
     });
-    const { result } = await res.json();
+    const { result, error } = await res.json();
+    if (error) throw new ReferenceError(error)
     if (shouldSign) {
         return await reqAPI("getResult", {
             data: {

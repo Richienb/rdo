@@ -1007,6 +1007,185 @@ export default class Rdo {
             }))
         }
     }
+
+    /**
+     * The methods described here allows RANDOM.ORG account holders to delegate use of services to other RANDOM.ORG account holders.
+     * A ‘delegation’ is a relationship between two RANDOM.ORG accounts in which one (the delegator) gives another (the delegate) access to use a particular service (e.g., the Third-Party Draw Service) on behalf of the delegator. The delegator can later remove the delegation if it wishes.
+    */
+    public readonly delegation = {
+        /**
+         * Create a delegation of a particular service between two RANDOM.ORG account holders.
+        */
+        add: async function add({
+            serviceID,
+            delegateID,
+            notifyDelegate = true
+        }: {
+            /**
+             * Numeric ID of the service to be delegated.
+            */
+            serviceID: integer,
+
+            /**
+             * Numeric ID of the delegate.
+            */
+            delegateID: integer,
+
+            /**
+             * This value specify whether the delegate should be notified about the creation of the delegation. If the value is set to true, RANDOM.ORG will attempt to issue a notification. No error message is reported to the delegator if the notification fails or if no method for notification is configured for the delegate in question.
+            */
+            notifyDelegate?: boolean
+        }): Promise<{
+            /**
+             * UUID identifying this delegation.
+            */
+            delegationKey: uuid
+        }> {
+            this.mustHaveCreds()
+
+            return await this.reqAPI("addDelegation", {
+                data: {
+                    credentials: this.conf.credentials,
+                    serviceId: serviceID,
+                    delegateId: delegateID,
+                    notifyDelegate,
+                },
+                getRandomData: false
+            })
+        },
+
+        /**
+         * Allow a delegator to remove a delegation, effectively revoking rights previously granted with the add method.
+        */
+        remove: async function remove({
+            delegationKey,
+            notifyDelegate = true
+        }: {
+            /**
+             * UUID identifying this delegation.
+            */
+            delegationKey: uuid
+
+            /**
+             * This value specify whether the delegate should be notified about the creation of the delegation. If the value is set to true, RANDOM.ORG will attempt to issue a notification. No error message is reported to the delegator if the notification fails or if no method for notification is configured for the delegate in question.
+            */
+            notifyDelegate?: boolean
+        }): Promise<boolean> {
+            this.mustHaveCreds()
+
+            const res = await this.reqAPI("removeDelegation", {
+                data: {
+                    credentials: this.conf.credentials,
+                    delegationKey,
+                    notifyDelegate,
+                },
+                getRandomData: false
+            })
+
+            return res === {}
+        },
+
+        /**
+         * List all delegations in which the user acts as delegator or delegate.
+        */
+        list: async function list(): Promise<Array<{
+            /**
+             * The numeric identifier of the delegated service.
+            */
+            serviceID: integer,
+
+            /**
+             * The numeric identifier of the delegator.
+            */
+            delegatorID: integer,
+
+            /**
+             * The numeric identifier of the delegate.
+            */
+            delegateID: integer,
+
+            /**
+             * UUID identifying this delegation.
+            */
+            delegationKey: uuid
+        }>> {
+            this.mustHaveCreds()
+
+            const { delegations } = await reqAPI("listDelegations", {
+                data: {
+                    credentials: this.conf.credentials
+                },
+                getRandomData: false
+            })
+
+            return delegations.map(delegations, ({
+                serviceId,
+                delegatorId,
+                delegateId,
+                delegationKey
+            }) => ({
+                serviceID: serviceId,
+                delegatorID: delegatorId,
+                delegateID: delegateId,
+                delegationKey
+            }))
+        },
+
+        /**
+         * Register a handler that will be used to deliver notifications about the creation and deletion of delegations in which the account holder is delegate.
+        */
+        handler: {
+            /**
+             * Register a handler that will be used to deliver notifications about the creation and deletion of delegations in which the account holder is delegate.
+            */
+            set: async function set({
+                handlerURL,
+                handlerSecret
+            }: {
+                /**
+                 * A URL that will be be used to deliver notifications in the form of JSON-RPC 2.0 requests. The URL must use HTTPS. The program residing at the URL must be able to handle the notifications described below.
+                */
+                handlerURL: url,
+
+                /**
+                 * A shared secret chosen by the caller. RANDOM.ORG will pass this secret back to the caller in all notifications. This allows the caller to verify the authenticity of the notifications.
+                */
+                handlerSecret: string
+            }): Promise<boolean> {
+                this.mustHaveCreds()
+
+                const res = await reqAPI("setNotificationHandler", {
+                    data: {
+                        credentials: this.conf.credentials,
+                        handlerUrl: handlerURL,
+                        handlerSecret,
+                    },
+                    getRandomData: false
+                })
+
+                return res === {}
+            },
+
+            /**
+             * Remove the handler that is being used to deliver notifications about the creation and deletion of delegations in which the account holder is delegate.
+            */
+            remove: async function remove() {
+                this.mustHaveCreds()
+
+                const res = await reqAPI("setNotificationHandler", {
+                    data: {
+                        credentials: this.conf.credentials,
+                        handlerUrl: null,
+                        handlerSecret: null,
+                    },
+                    getRandomData: false
+                })
+
+                return res === {}
+            },
+
+        }
+    }
 }
 
 module.exports = Rdo
