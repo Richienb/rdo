@@ -15,7 +15,7 @@ after_success:
 deploy:
     - provider: npm
       email: richiebendall@gmail.com
-      api_key: $npm_token
+      api_token: $npm_token
       edge: true
       on:
           tags: true
