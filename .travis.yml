@@ -13,17 +13,18 @@ after_success:
     - if [ -n "$TRAVIS_TAG" ]; then npm version $TRAVIS_TAG; fi
 
 deploy:
+    edge: true
+
     - provider: npm
       email: richiebendall@gmail.com
-      skip_cleanup: true
+      cleanup: false
       api_key: $npm_token
       on:
           tags: true
 
     - provider: pages
-      skip_cleanup: true
-      github_commit: "chore: Published documentation [skip ci]"
-      github_token: $github_token
+      cleanup: false
+      token: $github_token
       committer_from_gh: true
       keep_history: true
       local_dir: docs
