@@ -182,12 +182,12 @@ export default class Rdo {
         /**
          * A Random.org [API key](https://api.random.org/api-keys).
         */
-        signed?: boolean,
+        apiKey?: string,
 
         /**
-         * A Random.org [API key](https://api.random.org/api-keys).
+         * Sign the reponses from the Random.org API when using an API key.
         */
-        apiKey?: string,
+        signed?: boolean,
 
         /**
          * A Random.org [credentials object](https://api.random.org/json-rpc/2/authentication#credentials).
@@ -224,7 +224,7 @@ export default class Rdo {
      * Throw an error if not authenticated via an API key.
     */
     private mustBeAuthed(): void {
-        if (!this.isAuthed) throw new ReferenceError("API key required to use this function!")
+        if (!this.isAuthed) throw new ReferenceError("An API key is required to use this function!")
     }
 
     /**
@@ -260,7 +260,7 @@ export default class Rdo {
         amount?: integer,
 
         /**
-         * Specifies whether the random numbers should be picked with replacement. The default value will cause the numbers to be picked with replacement, i.e., the resulting numbers may contain duplicate values (like a series of dice rolls). If you want the numbers picked to be unique (like raffle tickets drawn from a container), set this value to true.
+         * Specifies whether the random numbers should be picked with replacement. The default value will cause the numbers to be picked with replacement, i.e., the resulting numbers may contain duplicate values (like a series of dice rolls). If you want the numbers picked to be unique (like raffle tickets drawn from a container), set this value to true. This option is only supported when using an API key.
         */
         unique?: boolean,
 
@@ -282,7 +282,6 @@ export default class Rdo {
                 signed: this.conf.signed
             })
         } else {
-            if (unique) console.warn("Uniqueness not supported without API key.")
             return await reqBase("integers", {
                 data: {
                     num: amount,
