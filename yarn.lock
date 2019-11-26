@@ -2875,9 +2875,9 @@ ky-universal@^0.3.0:
     node-fetch "^2.6.0"
 
 ky@^0.16.0:
-  version "0.16.0"
-  resolved "https://registry.yarnpkg.com/ky/-/ky-0.16.0.tgz#11abdc0048a1b16c0316aa198bdf6b5426d07226"
-  integrity sha512-a3mwZwG7BTKUHfSEwcwT1zcZZy/vW2LarWswSnTkV+mddtKx95PKutIQLn/v6EbZsp4mj0YNHpw5wyjw0PcsIg==
+  version "0.16.1"
+  resolved "https://registry.yarnpkg.com/ky/-/ky-0.16.1.tgz#1b7e14b1a964525b270fca5faf3bbf9e47ac8c8a"
+  integrity sha512-olhyGihJ8XOxP8dhdXXDFu1FfowsmkQznI33KNTl4Woa3T/UDBEV/FR8Y8Pe1cJ3ofVnlflcXRUE8a3Phwr3Og==
 
 latest-version@^5.0.0:
   version "5.1.0"
