@@ -1142,9 +1142,9 @@ core-js@^2.0.0:
   integrity sha512-I39t74+4t+zau64EN1fE5v2W31Adtc/REhzWN+gWRRXg6WH5qAsZm62DHpQ1+Yhe4047T55jvzz7MUqF/dBBlA==
 
 cross-blob@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/cross-blob/-/cross-blob-1.1.0.tgz#15c1bcbe8ed2b05fe1695abea3f4d48987df877b"
-  integrity sha512-Xvi8cFLdZytyA1Dp/sLwOQo4A51FPM1SrwNryU+94Hz3Ac5ufk8tLZX9nZE/GawFk7hgYgRYSmqHPgY7H2fcmw==
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/cross-blob/-/cross-blob-1.1.1.tgz#6a83a3ddd3264cfdeeee2e66f89bfc450d3ebf6e"
+  integrity sha512-lOeAVGdZx7/N9w9toJW6x27GB7fGBCs03GmcrWMKBdf2qlE6vEXSDRZCKYktdq1vIyw98DqakbzAoVEcS13vow==
   dependencies:
     blob "^0.0.5"
     env-crosser "^1.0.0"
