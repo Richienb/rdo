@@ -31,32 +31,40 @@
         "atob": "^2.1.2",
         "cross-blob": "^1.1.0",
         "english-chars": "^1.0.1",
+        "for-range": "^1.0.0",
         "is-uuid": "^1.0.2",
         "ky": "^0.16.0",
         "ky-universal": "^0.3.0",
         "lodash": "^4.17.15",
         "md5": "^2.2.1",
-        "put-after": "^1.0.1",
-        "tslib": "^1.10.0"
+        "put-after": "^1.0.1"
     },
     "devDependencies": {
         "@types/atob": "^2.1.2",
         "@types/is-uuid": "^1.0.0",
         "@types/lodash": "^4.14.149",
         "@types/md5": "^2.1.33",
-        "ava": "^2.1.0",
+        "ava": "^2.4.0",
         "eslint-config-richienb": "^0.2.3",
-        "is-blob": "^2.0.1",
+        "is-blob": "^2.1.0",
         "ts-node": "^8.5.2",
         "typedoc": "^0.15.2",
         "typescript": "^3.7.2",
         "xo": "^0.25.3"
     },
     "resolutions": {
-        "eslint": "^6.6.0"
+        "eslint": "^6.8.0"
     },
     "xo": {
-        "extends": "richienb/ts"
+        "extends": "richienb/ts",
+        "overrides": [
+            {
+                "files": "test.js",
+                "rules": {
+                    "import/default": 0
+                }
+            }
+        ]
     },
     "ava": {
         "compileEnhancements": false,

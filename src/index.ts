@@ -2,13 +2,12 @@
 
 import englishChars from "english-chars"
 import _ from "lodash"
+import md5 from "md5"
 
+import b64ToBlob from "./utils/b64-to-blob"
+import { integer, decimal, uuid, url } from "./externals"
 import { reqAPI, reqBase } from "./request"
 import isValidKey from "./lib/validate-api-key"
-import { integer, decimal, uuid, url } from "./externals"
-import b64ToBlob from "./lib/b64-to-blob"
-import md5 from "md5"
-import timestampToDate from "./lib/timestamp-to-date"
 
 type supportedBases = 2 | 8 | 10 | 16
 
@@ -16,22 +15,22 @@ interface DrawData {
     /**
      * The numeric ID for the drawing assigned by RANDOM.ORG. This value is null for drawings of type "test".
     */
-    drawID: integer,
+    drawID: integer
 
     /**
      * The textual description associated with the drawing (e.g., ‘Prize Draw for two U2 concert tickets’).
     */
-    title: string,
+    title: string
 
     /**
      * This value determines whether the record of the drawing held by RANDOM.ORG will be viewable by anyone (public), only to the owner of the drawing (private) or whether the record will allow identifer-based lookups (entrantAccessible). If the value for recordType is set to test, no record of the result is generated and no charge is made for the drawing. Drawings of type test are mainly useful for development purposes.
     */
-    recordType?: "public" | "private" | "entrantAccessible" | "test",
+    recordType?: "public" | "private" | "entrantAccessible" | "test"
 
     /**
      * This parameter allows the client to specify what type each entry is. Possible values are opaque and email. Future values will include twitterUser and facebookUser. If the value opaque is given, no special behaviour is performed by the drawing's record in regard to entry lookup or presentation. This is the correct value for ticket numbers, customer numbers, etc.
     */
-    entryType?: "opaque" | "email",
+    entryType?: "opaque" | "email"
 
     /**
      * A numeric value that indicates the ranking of the first winner picked as displayed in the record. Please see the description for the holdDraw method for further details.
@@ -41,7 +40,7 @@ interface DrawData {
     /**
      * A value that indicates how the winners for the drawing were selected. Possible values are replace, remove and exclude. Please see the description for the holdDraw method for further details.
     */
-    winnerHandling?: "remove" | "replace" | "exclude",
+    winnerHandling?: "remove" | "replace" | "exclude"
 
     /**
      * A boolean value that indicates whether the record of the drawing shows the entries (true) or not (false). The amount of information shown depends on the drawing's recordType. Please see the description for the holdDraw method for further details.
@@ -51,109 +50,109 @@ interface DrawData {
     /**
      * A boolean value that indicates whether the record of the drawing shows the number of winners (true) or not (false). The value is only meaningful for drawings with a recordType that is entrantAccessible. Please see the description for the holdDraw method for further details.
     */
-    showWinners?: boolean,
+    showWinners?: boolean
 
     /**
      * Possible values are completed, withheld and test. The value indicates the status of the drawing. If there was sufficient credit in the client's account, the status will be completed. It may be withheld if insufficient credit was available in the client's account in which the account must be topped up for the result to be revealed. For drawings of type test, this value is test.
     */
-    status: "completed" | "withheld" | "test",
+    status: "completed" | "withheld" | "test"
 
     /**
      * The numeric ID associated with the RANDOM.ORG account that held the drawing.
     */
-    ownerID: integer,
+    ownerID: integer
 
     /**
      * The name associated with the RANDOM.ORG account that held the drawing (e.g., ‘Gorgeous Flowers LLC’).
     */
-    ownerName: string,
+    ownerName: string
 
     /**
      * The time zone currently associated with the owner's account. This allows the client to display the completionTime in that time zone, if desired.
     */
-    ownerTimeZone: string,
+    ownerTimeZone: string
 
     /**
      * The serial number of the drawing within the owner's account. The drawNumber for the first drawing held with a given account is 1, the drawNumber of the second is 2, and so on and so forth.
     */
-    drawNumber: integer,
+    drawNumber: integer
 
     /**
      * The number of entries counted by RANDOM.ORG.
     */
-    entryCount: integer,
+    entryCount: integer
 
     /**
      * The list of entries. This will be null unless the client authenticates itself (using the credentials parameter) as the owner of the drawing or as a delegate acting on the owner's behalf; or unless the drawing is public and was held with a showEntries value of true. A maximum of maxEntries (from the request) entries are returned.
     */
-    entries: string[] | null,
+    entries: string[] | null
 
     /**
      * The number of winning entries selected by RANDOM.ORG. This value will be null if showWinners was set to false when the drawing was held, except if the credentials supplied are those of the drawing's owner.
     */
-    winnerCount: integer | null,
+    winnerCount: integer | null
 
     /**
      * An array with the winning entries ordered by winning number (1st winner, 2nd winner, etc.). It is subject to the same access constraints as the entries array. The value of winners will be null if the drawing's status is withheld, meaning that the winners have been picked but that the drawing's owner must add credit to their account to reveal the result.
     */
-    winners: string[] | null,
+    winners: string[] | null
 
     /**
      * An ISO 8601 time stamp indicating the time at which the drawing was completed.
     */
-    completionTime: Date,
+    completionTime: Date
 
     /**
      * The URL at which the official record of the drawing can be found. If the drawing's recordType is private, the client must be logged in to view the record. This value is null for drawings of type test.
     */
-    recordURL: url | null,
+    recordURL: url | null
 }
 
 interface GiveawayData {
     /**
      * An alphanumeric verification code that identifies your giveaway. You can publish this to users, such that they can use it to verify the giveaway result. You can also compute the URL for your giveaway's verification page as follows: https://giveaways.random.org/verify/giveawayKey
     */
-    giveawayKey: string,
+    giveawayKey: string
 
     /**
      * A numeric user ID that identifies the owner of the giveaway.
     */
-    ownerID: integer,
+    ownerID: integer
 
     /**
      * The textual description of the giveaway. This will be identical to the value supplied in the description parameter.
     */
-    description: string,
+    description: string
 
     /**
      * The list of entries in this giveaway. This will be identical to the value supplied in the entries parameter.
     */
-    entries: string[],
+    entries: string[]
 
     /**
      * The total number of rounds in this giveaway. This will be identical to the value supplied in the rounds parameter.
     */
-    rounds: integer,
+    rounds: integer
 
     /**
      * The result of the rounds held so far, represented as an array of arrays with indices into the entries array. The first array contains the result of the first round, the second array of the second round, and so forth. If not all rounds have been run yet, the length of the roundsHeld array will be less than rounds.
     */
-    roundsHeld: integer,
+    roundsHeld: integer
 
     /**
      * A UTC timestamp showing the exact time at which the giveaway was created.
     */
-    created: Date,
+    created: Date
 
     /**
      * A UTC timestamp showing the exact time at which the giveaway was completed. If the giveaway has not yet been completed (i.e., its last round has not been run yet), then the value of completed will be null.
     */
-    completed: Date,
+    completed: Date
 
     /**
      * A timestamp UTC showing the exact time at which the giveaway will expire. This is normally one month after the created property.
     */
-    expires: Date,
+    expires: Date
 }
 
 interface GiveawayDataCurr extends GiveawayData {
@@ -182,12 +181,12 @@ export default class Rdo {
         /**
          * A Random.org [API key](https://api.random.org/api-keys).
         */
-        apiKey?: string,
+        apiKey?: string
 
         /**
          * Sign the reponses from the Random.org API when using an API key.
         */
-        signed?: boolean,
+        signed?: boolean
 
         /**
          * A Random.org [credentials object](https://api.random.org/json-rpc/2/authentication#credentials).
@@ -196,7 +195,7 @@ export default class Rdo {
             /**
              * The login (username) associated with the client's RANDOM.ORG account.
             */
-            login: string,
+            login: string
 
             /**
              * The password associated with the client's RANDOM.ORG account.
@@ -242,27 +241,27 @@ export default class Rdo {
         max,
         amount = 1,
         unique = false,
-        base = 10
+        base = 10,
     }: {
         /**
          * The lower boundary for the range from which the random numbers will be picked. Must be within the [-1e9,1e9] range.
         */
-        min: integer,
+        min: integer
 
         /**
          * The upper boundary for the range from which the random numbers will be picked. Must be within the [-1e9,1e9] range.
         */
-        max: integer,
+        max: integer
 
         /**
          * How many random integers you need. Must be within the [1,1e4] range.
         */
-        amount?: integer,
+        amount?: integer
 
         /**
          * Specifies whether the random numbers should be picked with replacement. The default value will cause the numbers to be picked with replacement, i.e., the resulting numbers may contain duplicate values (like a series of dice rolls). If you want the numbers picked to be unique (like raffle tickets drawn from a container), set this value to true. This option is only supported when using an API key.
         */
-        unique?: boolean,
+        unique?: boolean
 
         /**
          * Specifies the base that will be used to display the numbers. This affects the JSON types and formatting of the resulting data.
@@ -301,17 +300,17 @@ export default class Rdo {
     public async decimal({
         amount = 1,
         places = 14,
-        unique = false
+        unique = false,
     }: {
         /**
          * How many random decimal fractions you need. Must be within the [1,10000] range.
         */
-        amount?: integer,
+        amount?: integer
 
         /**
          * The number of decimal places to use. Must be within the [1,14] range.
         */
-        places?: integer,
+        places?: integer
 
         /**
          * Specifies whether the random numbers should be picked with replacement. The default (false) will cause the numbers to be picked with replacement, i.e., the resulting numbers may contain duplicate values (like a series of dice rolls). If you want the numbers picked to be unique (like raffle tickets drawn from a container), set this value to true.
@@ -340,32 +339,32 @@ export default class Rdo {
         amount = 1,
         length = 1,
         unique = false,
-        base = 10
+        base = 10,
     }: {
         /**
          * The lower boundaries of the sequences requested. For uniform sequences, min must be an integer in the [-1000000000,1000000000] range. For multiform sequences, min can be an array with n integers, each specifying the lower boundary of the sequence identified by its index. In this case, each value in min must be within the [-1000000000,1000000000] range.
         */
-        min: integer | integer[],
+        min: integer | integer[]
 
         /**
          * The upper boundaries of the sequences requested. For uniform sequences, max must be an integer in the [-1000000000,1000000000] range. For multiform sequences, max can be an array with n integers, each specifying the upper boundary of the sequence identified by its index. In this case, each value in max must be within the [-1000000000,1000000000] range.
         */
-        max: integer | integer[],
+        max: integer | integer[]
 
         /**
          * The number of sequences requested. Must be within the [1,1000] range.
         */
-        amount?: integer,
+        amount?: integer
 
         /**
          * This parameter specifies the lengths of the sequences requested. For uniform sequences, length must be an integer in the [1,10000] range. For multiform sequences, length can be an array with n integers, each specifying the length of the sequence identified by its index. In this case, each value in length must be within the [1,10000] range and the total sum of all the lengths must be in the [1,10000] range.
         */
-        length?: integer | integer[],
+        length?: integer | integer[]
 
         /**
          * Specifies whether the random numbers should be picked with replacement. The default value will cause the numbers to be picked with replacement, i.e., the resulting numbers may contain duplicate values (like a series of dice rolls). If you want the numbers picked to be unique (like raffle tickets drawn from a container), set this value to true.
         */
-        unique?: boolean | boolean[],
+        unique?: boolean | boolean[]
 
         /**
          * Specifies the base that will be used to display the numbers. This affects the JSON types and formatting of the resulting data.
@@ -400,17 +399,17 @@ export default class Rdo {
         /**
          * How many random numbers you need. Must be within the [1,10000] range.
         */
-        amount?: integer,
+        amount?: integer
 
         /**
          * The distribution's mean. Must be within the [-1000000,1000000] range.
         */
-        mean: integer,
+        mean: integer
 
         /**
          * The distribution's standard deviation. Must be within the [-1000000,1000000] range.
         */
-        standardDeviation: integer,
+        standardDeviation: integer
 
         /**
          * The number of significant digits to use. Must be within the [2,14] range.
@@ -438,17 +437,17 @@ export default class Rdo {
         amount = 1,
         length = 1,
         characters = englishChars.all,
-        unique = false
+        unique = false,
     }: {
         /**
          * How many random strings you need. Must be within the [1,10000] range.
         */
-        amount?: integer,
+        amount?: integer
 
         /**
          * The length of each string. Must be within the [1,32] range. All strings will be of the same length
         */
-        length?: integer,
+        length?: integer
 
         /**
          * A set of characters that are allowed to occur in the random strings. The maximum number of characters is 128.
@@ -458,7 +457,7 @@ export default class Rdo {
         /**
          * Specifies whether the random strings should be picked with replacement. The default (false) will cause the strings to be picked with replacement, i.e., the resulting list of strings may contain duplicates (like a series of dice rolls). If you want the strings to be unique (like raffle tickets drawn from a container), set this value to true.
         */
-        unique?: boolean,
+        unique?: boolean
     } = {}): Promise<string[]> {
         if (_.isArray(characters)) characters = characters.join("")
         if (this.isAuthed) {
@@ -490,7 +489,7 @@ export default class Rdo {
      * Generate version 4 true random [Universally Unique IDentifiers](http://en.wikipedia.org/wiki/Universally_unique_identifier) (UUIDs) in accordance with section 4.4 of [RFC 4122](http://www.ietf.org/rfc/rfc4122.txt).
     */
     public async uuid({
-        amount = 1
+        amount = 1,
     }: {
         /**
          * How many random UUIDs you need. Must be within the [1,1000] range.
@@ -518,12 +517,12 @@ export default class Rdo {
         /**
          * How many random blobs you need. Must be within the [1,100] range.
         */
-        amount?: integer,
+        amount?: integer
 
         /**
          * The size of each blob, measured in bits. Must be within the [1,1048576] range and must be divisible by 8.
         */
-        size?: integer,
+        size?: integer
     } = {}): Promise<Blob[]> {
         this.mustBeAuthed()
 
@@ -544,27 +543,27 @@ export default class Rdo {
         /**
          * If the API key is running. An API key must be running for it to be able to serve requests.
         */
-        running: boolean,
+        running: boolean
 
         /**
          * The timestamp in [ISO 8601](http://en.wikipedia.org/wiki/ISO_8601) format at which the API key was created.
         */
-        creationTime: Date,
+        creationTime: Date
 
         /**
          * The (estimated) number of remaining true random bits available to the client.
         */
-        bitsLeft: integer,
+        bitsLeft: integer
 
         /**
          * The (estimated) number of remaining API requests available to the client.
         */
-        requestsLeft: integer,
+        requestsLeft: integer
 
         /**
          * The number of bits used by this API key since it was created.
         */
-        totalBits: integer,
+        totalBits: integer
 
         /**
          * The number of requests used by this API key since it was created.
@@ -612,36 +611,36 @@ export default class Rdo {
             winnerHandling = "remove",
             showEntries = true,
             showWinners = true,
-            delegationKey = null
+            delegationKey = null,
         }: {
             /**
              * The textual description that will be associated with the drawing (e.g., ‘Prize Draw for two U2 concert tickets’). The length of the title must be in the [1,192] range.*/
-            title: string,
+            title: string
 
             /**
              * This value determines whether the record of the drawing held by RANDOM.ORG will be viewable by anyone (public), only to the owner of the drawing (private) or whether the record will allow identifer-based lookups (entrantAccessible). If the value for recordType is set to test, no record of the result is generated and no charge is made for the drawing. Drawings of type test are mainly useful for development purposes.
             */
-            recordType?: "public" | "private" | "entrantAccessible" | "test",
+            recordType?: "public" | "private" | "entrantAccessible" | "test"
 
             /**
              * An array containing the entries from which the winner(s) will be drawn. The number of entries must be in the [2,3000000] range.
             */
-            entries: string[],
+            entries: string[]
 
             /**
              * The number of winning entries requested. The value must be in the [1,50000] range.
             */
-            winnerCount?: integer,
+            winnerCount?: integer
 
             /**
              * This parameter allows the client to specify what type each entry is. Possible values are opaque and email. Future values will include twitterUser and facebookUser. If the value opaque is given, no special behaviour is performed by the drawing's record in regard to entry lookup or presentation. This is the correct value for ticket numbers, customer numbers, etc.
             */
-            entryType?: "opaque" | "email",
+            entryType?: "opaque" | "email"
 
             /**
              * This parameter is used to specify whether the entries array is allowed to contain identical identifiers. If identicalEntriesPermitted is set to false, RANDOM.ORG will check the entries array for duplicates and return an error response in case duplicates are found.
             */
-            identicalEntriesPermitted?: boolean,
+            identicalEntriesPermitted?: boolean
 
             /**
              * This parameter specifies the ranking that the first winner picked will receive in the record. Effectively, it allows the client to number the winners from a different starting point than the default 1st winner, 2nd winner, etc. This is useful if different ranges of winners for the same campaign are being selected using several drawings, or if an additional drawing is being held to replace an ineligible winner from a previous drawing.
@@ -651,7 +650,7 @@ export default class Rdo {
             /**
              * If the drawing has a winnerCount value that is greater than 1, then winnerHandling controls how those winners are selected. If winnerHandling is set to replace, an entry which has been selected as winner is inserted back (i.e., replaced) into the pool of elegible entries and can hence be selected as winner again. If winnerHandling is set to remove, the winning entry is removed from the pool of legible entries; however, if the entry appeared multiple times in the entries array (and identicalEntriesPermitted is set to true), those other entries still remain in the pool of elegible entries and can be selected as winner in subsequent selections. If winnerHandling is set to exclude, all occurrences of the winning entry are eliminated from the pool of elegible entries, essentially allowing each winner to win only once, regardless of the number of times the corresponding entry occurred in the entries array. If the drawing has a winnerCount value of 1, then winnerHandling has no effect.
             */
-            winnerHandling?: "remove" | "replace" | "exclude",
+            winnerHandling?: "remove" | "replace" | "exclude"
 
             /**
              * This value specifies whether the record of the drawing should show the number of entries (true) or not (false). For drawings where the recordType is public, a showEntries value of true will create a record that shows the number of entries as well as the entire list of entries, whereas a value of false will create a record that shows neither of these fields. (In both cases, the record will show the number of winners as well as the actual winning identifiers.) For drawings where the recordType is entrantAccessible, a showEntries value of true will create a record that shows the number of entries and allows that entry list to be queried as is normal behaviour for entrantAccessible drawings, whereas a value of false will not show the number of entries but will still allow the entry list to be queried. The showEntries value has no effect for drawings where the recordType is private.
@@ -661,7 +660,7 @@ export default class Rdo {
             /**
              * This value only has effect for drawings where the recordType is entrantAccessible. For those drawings, the parameter specifies whether the record of the drawing should show the number of winners (true) or not (false). The parameter also affects how the record of the drawing will behave. For a drawing where showWinners was set to true when the drawing was held, the record will show the winning rank for entries when queried (e.g., ‘The entry had 6 chances and was picked as 2nd winner’). For a drawing where showWinners was set to false, the record will show whether an entry was picked as winner but not show the rank (e.g., ‘The entry had 6 chances and was picked as a winner’).
             */
-            showWinners?: boolean,
+            showWinners?: boolean
 
             /**
              * A UUID that indicates that the caller is acting on behalf of another party. The delegationKey indicates who that other party is.
@@ -671,32 +670,32 @@ export default class Rdo {
             /**
              * The numeric ID for the drawing assigned by RANDOM.ORG. This value is null for drawings of type "test".
             */
-            drawID: integer,
+            drawID: integer
 
             /**
              * Possible values are completed, withheld and test. The value indicates the status of the drawing. If there was sufficient credit in the client's account, the status will be completed. It may be withheld if insufficient credit was available in the client's account in which the account must be topped up for the result to be revealed. For drawings of type test, this value is test.
             */
-            status: "completed" | "withheld" | "test",
+            status: "completed" | "withheld" | "test"
 
             /**
              * The number of entries counted by RANDOM.ORG.
             */
-            entryCount: integer,
+            entryCount: integer
 
             /**
              * A JSON array with the winning entries ordered by winner number. The client should consider the first element the first winner, the second element the second winner, and so on; subject to the value given for the winnerStart parameter in the request. The value for winners is null if the drawing's status is withheld, meaning that the winning entries have been picked but that the client must add credit to their account to reveal the result.
             */
-            winners: string[] | null,
+            winners: string[] | null
 
             /**
              * An ISO 8601 time stamp indicating the time at which the drawing was completed.
             */
-            completionTime: Date,
+            completionTime: Date
 
             /**
              * The URL at which the official record of the drawing can be found. If the drawing's recordType is private, the client must be logged in to view the record. This value is null for drawings of type test.
             */
-            recordURL: url | null,
+            recordURL: url | null
         }> {
             this.mustHaveCreds()
 
@@ -737,17 +736,17 @@ export default class Rdo {
         get: async function get({
             drawID,
             maxEntries = 3000000,
-            delegationKey = null
+            delegationKey = null,
         }: {
             /**
              * The numeric ID for the drawing assigned by RANDOM.ORG.
             */
-            drawID: integer,
+            drawID: integer
 
             /**
              * A cap on the number of entries that the client wishes to have included in the response. The response's entries array will contain no more than maxEntries values. Any entries returned will be the first in the entry list.
             */
-            maxEntries?: integer,
+            maxEntries?: integer
 
             /**
              * A UUID that indicates that the caller is a delegate acting on behalf of another party. The delegationKey indicates who that other party is. If the caller includes a different value from null for the delegationKey in the request, it must also include its own credentials. (The delegator's credentials are not required.)
@@ -793,7 +792,7 @@ export default class Rdo {
          * This method lets a RANDOM.ORG account holder list all the drawings in their account. Your client must set the method property of its JSON-RPC request object to listDraws.
         */
         list: async function list({
-            delegationKey = null
+            delegationKey = null,
         }: {
             /**
              * A UUID that indicates that the caller is acting on behalf of another party. The delegationKey indicates who that other party is.
@@ -848,22 +847,22 @@ export default class Rdo {
             description,
             entries,
             rounds,
-            delegationKey = null
+            delegationKey = null,
         }: {
             /**
              * The textual title that will be associated with the giveaway (e.g., ‘1954 Bowman Gum baseball card of Vern Bickford’). The length of the description must be in the [1,192] range.
             */
-            description: string,
+            description: string
 
             /**
              * An array containing the entries to be randomized. The number of entries must be in the [2,3000] range.
             */
-            entries: string[],
+            entries: string[]
 
             /**
              * How many rounds there will be in this giveaway. The number of rounds must be in the [2,30] range. After it has been created, the giveaway will not be considered completed until the client has invoked the cont method for all the rounds.
             */
-            rounds: integer,
+            rounds: integer
 
 
             /**
@@ -892,10 +891,10 @@ export default class Rdo {
                 entries,
                 rounds,
                 roundsHeld,
-                created: timestampToDate(created),
-                completed: timestampToDate(completed),
-                expires: timestampToDate(expires),
-                completionTime: timestampToDate(completionTime)
+                created: new Date(created),
+                completed: new Date(completed),
+                expires: new Date(expires),
+                completionTime: new Date(completionTime)
             }
         },
 
@@ -904,7 +903,7 @@ export default class Rdo {
         */
         cont: async function cont({
             giveawayKey,
-            delegationKey = null
+            delegationKey = null,
         }: {
             /**
              * An alphanumeric verification code that identifies your giveaway. Must have been returned as the result of a previous request to beginGiveaway.
@@ -934,10 +933,10 @@ export default class Rdo {
                 entries,
                 rounds,
                 roundsHeld,
-                created: timestampToDate(created),
-                completed: timestampToDate(completed),
-                expires: timestampToDate(expires),
-                completionTime: timestampToDate(completionTime)
+                created: new Date(created),
+                completed: new Date(completed),
+                expires: new Date(expires),
+                completionTime: new Date(completionTime)
             }
         },
 
@@ -945,7 +944,7 @@ export default class Rdo {
          * This method obtains the details of a giveaway. The giveaway must have been created with the being method and can be either in completed or not completed state. The records of giveaways are public, so no authentication is required to use this method.
         */
         get: async function get({
-            giveawayKey
+            giveawayKey,
         }: {
             /**
              * A key (i.e., verification code) that identifies the giveaway in question.
@@ -966,9 +965,9 @@ export default class Rdo {
                 entries,
                 rounds,
                 roundsHeld,
-                created: timestampToDate(created),
-                completed: timestampToDate(completed),
-                expires: timestampToDate(expires),
+                created: new Date(created),
+                completed: new Date(completed),
+                expires: new Date(expires),
             }
         },
 
@@ -976,7 +975,7 @@ export default class Rdo {
          * This method lists all non-expired giveaways for a given RANDOM.ORG account.
         */
         list: async function list({
-            delegationKey = null
+            delegationKey = null,
         }: {
             /**
              * A UUID that indicates that the caller is acting on behalf of another party. The delegationKey indicates who that other party is.
@@ -1000,9 +999,9 @@ export default class Rdo {
                 entries,
                 rounds,
                 roundsHeld,
-                created: timestampToDate(created),
-                completed: timestampToDate(completed),
-                expires: timestampToDate(expires),
+                created: new Date(created),
+                completed: new Date(completed),
+                expires: new Date(expires),
             }))
         }
     }
@@ -1015,20 +1014,20 @@ export default class Rdo {
         /**
          * Create a delegation of a particular service between two RANDOM.ORG account holders.
         */
-        add: async function add({
+        async add({
             serviceID,
             delegateID,
-            notifyDelegate = true
+            notifyDelegate = true,
         }: {
             /**
              * Numeric ID of the service to be delegated.
             */
-            serviceID: integer,
+            serviceID: integer
 
             /**
              * Numeric ID of the delegate.
             */
-            delegateID: integer,
+            delegateID: integer
 
             /**
              * This value specify whether the delegate should be notified about the creation of the delegation. If the value is set to true, RANDOM.ORG will attempt to issue a notification. No error message is reported to the delegator if the notification fails or if no method for notification is configured for the delegate in question.
@@ -1056,9 +1055,9 @@ export default class Rdo {
         /**
          * Allow a delegator to remove a delegation, effectively revoking rights previously granted with the add method.
         */
-        remove: async function remove({
+        async remove({
             delegationKey,
-            notifyDelegate = true
+            notifyDelegate = true,
         }: {
             /**
              * UUID identifying this delegation.
@@ -1087,21 +1086,21 @@ export default class Rdo {
         /**
          * List all delegations in which the user acts as delegator or delegate.
         */
-        list: async function list(): Promise<Array<{
+        async list(): Promise<Array<{
             /**
              * The numeric identifier of the delegated service.
             */
-            serviceID: integer,
+            serviceID: integer
 
             /**
              * The numeric identifier of the delegator.
             */
-            delegatorID: integer,
+            delegatorID: integer
 
             /**
              * The numeric identifier of the delegate.
             */
-            delegateID: integer,
+            delegateID: integer
 
             /**
              * UUID identifying this delegation.
@@ -1137,14 +1136,14 @@ export default class Rdo {
             /**
              * Register a handler that will be used to deliver notifications about the creation and deletion of delegations in which the account holder is delegate.
             */
-            set: async function set({
+            async set({
                 handlerURL,
-                handlerSecret
+                handlerSecret,
             }: {
                 /**
                  * A URL that will be be used to deliver notifications in the form of JSON-RPC 2.0 requests. The URL must use HTTPS. The program residing at the URL must be able to handle the notifications described below.
                 */
-                handlerURL: url,
+                handlerURL: url
 
                 /**
                  * A shared secret chosen by the caller. RANDOM.ORG will pass this secret back to the caller in all notifications. This allows the caller to verify the authenticity of the notifications.
@@ -1168,7 +1167,7 @@ export default class Rdo {
             /**
              * Remove the handler that is being used to deliver notifications about the creation and deletion of delegations in which the account holder is delegate.
             */
-            remove: async function remove() {
+            async remove() {
                 this.mustHaveCreds()
 
                 const res = await reqAPI("setNotificationHandler", {

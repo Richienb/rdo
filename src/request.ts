@@ -15,8 +15,8 @@ export async function reqAPI(method: string, { data, getRandomData = true, signe
             params: data,
             id: 0
         }
-    });
-    const { result, error } = await res.json();
+    })
+    const { result, error } = await res.json()
     if (error) throw new ReferenceError(error)
     if (shouldSign) {
         return await reqAPI("getResult", {
@@ -44,8 +44,8 @@ export async function reqBase(method: string, { data, convertToNumber = false }:
             format: "plain",
             ...data,
         },
-    });
-    let result = await res.text();
+    })
+    let result = await res.text()
     return _.chain(result)
         .split("\n")
         .initial()
@@ -53,5 +53,5 @@ export async function reqBase(method: string, { data, convertToNumber = false }:
             if (convertToNumber) return _.map(val, val => +val)
             return val
         })
-        .value();
+        .value()
 }
