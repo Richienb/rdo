@@ -44,7 +44,7 @@
         "@types/is-uuid": "^1.0.0",
         "@types/lodash": "^4.14.149",
         "@types/md5": "^2.1.33",
-        "ava": "^2.4.0",
+        "ava": "^3.2.0",
         "eslint-config-richienb": "^0.2.3",
         "is-blob": "^2.1.0",
         "ts-node": "^8.5.2",
