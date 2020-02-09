@@ -10,7 +10,8 @@ Random.org API client library for JavaScript.
 - Response normalisation.
 - Sensible defaults.
 - Automatic request encoding.
-- Works in NodeJS and in the browser.
+- Works in Node.js and in the browser.
+- Actively Maintained.
 
 ## Install
 

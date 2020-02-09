@@ -1,10 +1,13 @@
 {
-    "compilerOptions": {
-        "esModuleInterop": true,
-        "sourceMap": true,
-        "declaration": true,
-        "outDir": "dist/",
-        "target": "es2017",
-        "module": "commonjs"
-    }
+	"compilerOptions": {
+		"esModuleInterop": true,
+		"sourceMap": true,
+		"declaration": true,
+		"outDir": "dist/",
+		"target": "es2018",
+		"module": "commonjs"
+	},
+	"include": [
+		"src/**/*"
+	]
 }

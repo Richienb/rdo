@@ -1,78 +1,74 @@
 {
-    "name": "rdo",
-    "version": "0.0.0",
-    "description": "Random.org API client library for JavaScript.",
-    "repository": "https://github.com/Richienb/rdo.git",
-    "author": "Richie Bendall <richiebendall@gmail.com>",
-    "license": "MIT",
-    "main": "dist/index.js",
-    "files": [
-        "src/**/*",
-        "dist/**/*"
-    ],
-    "engines": {
-        "node": ">=8.3"
-    },
-    "scripts": {
-        "docs": "typedoc",
-        "build": "tsc && yarn docs",
-        "dev": "yarn tsc --watch",
-        "lint": "xo",
-        "test": "yarn lint && ava"
-    },
-    "keywords": [
-        "random",
-        "request",
-        "api",
-        "client",
-        "random.org"
-    ],
-    "dependencies": {
-        "atob": "^2.1.2",
-        "cross-blob": "^1.1.0",
-        "english-chars": "^1.0.1",
-        "for-range": "^1.0.0",
-        "is-uuid": "^1.0.2",
-        "ky": "^0.16.0",
-        "ky-universal": "^0.3.0",
-        "lodash": "^4.17.15",
-        "md5": "^2.2.1",
-        "put-after": "^1.0.1"
-    },
-    "devDependencies": {
-        "@types/atob": "^2.1.2",
-        "@types/is-uuid": "^1.0.0",
-        "@types/lodash": "^4.14.149",
-        "@types/md5": "^2.1.33",
-        "ava": "^2.4.0",
-        "eslint-config-richienb": "^0.2.3",
-        "is-blob": "^2.1.0",
-        "ts-node": "^8.5.2",
-        "typedoc": "^0.16.2",
-        "typescript": "^3.7.2",
-        "xo": "^0.25.3"
-    },
-    "resolutions": {
-        "eslint": "^6.8.0"
-    },
-    "xo": {
-        "extends": "richienb/ts",
-        "overrides": [
-            {
-                "files": "test.js",
-                "rules": {
-                    "import/default": 0
-                }
-            }
-        ]
-    },
-    "ava": {
-        "compileEnhancements": false,
-        "extensions": [
-            "ts"
-        ],
-        "require": [
-            "ts-node/register"
-        ]
-    }
+	"name": "rdo",
+	"version": "0.0.0",
+	"description": "Random.org API client library for JavaScript.",
+	"repository": "https://github.com/Richienb/rdo.git",
+	"author": "Richie Bendall <richiebendall@gmail.com>",
+	"license": "MIT",
+	"main": "dist/index.js",
+	"files": [
+		"src/**/*",
+		"dist/**/*"
+	],
+	"engines": {
+		"node": ">=10"
+	},
+	"scripts": {
+		"docs": "typedoc",
+		"build": "tsc && yarn docs",
+		"dev": "yarn tsc --watch",
+		"lint": "xo",
+		"test": "yarn lint && ava"
+	},
+	"keywords": [
+		"random",
+		"request",
+		"api",
+		"client",
+		"random.org"
+	],
+	"dependencies": {
+		"array-initial": "^1.1.0",
+		"blob-util": "^2.0.2",
+		"cross-blob-util": "^1.0.0",
+		"english-chars": "^1.0.1",
+		"is-uuid": "^1.0.2",
+		"ky": "^0.17.0",
+		"ky-universal": "^0.4.0",
+		"md5": "^2.2.1",
+		"put-after": "^2.0.0"
+	},
+	"devDependencies": {
+		"@types/is-uuid": "^1.0.0",
+		"@types/md5": "^2.1.33",
+		"ava": "^3.2.0",
+		"eslint-config-richienb": "^0.3.0",
+		"is-blob": "^2.1.0",
+		"ts-node": "^8.5.2",
+		"typedoc": "^0.16.2",
+		"typescript": "^3.7.2",
+		"xo": "^0.25.3"
+	},
+	"resolutions": {
+		"eslint": "^6.8.0"
+	},
+	"xo": {
+		"extends": "richienb/ts",
+		"overrides": [
+			{
+				"files": "test.js",
+				"rules": {
+					"import/default": 0
+				}
+			}
+		]
+	},
+	"ava": {
+		"extensions": [
+			"ts"
+		],
+		"require": [
+			"ts-node/register"
+		]
+	}
 }
