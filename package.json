@@ -34,7 +34,7 @@
 		"english-chars": "^1.0.1",
 		"is-uuid": "^1.0.2",
 		"ky": "^0.17.0",
-		"ky-universal": "^0.4.0",
+		"ky-universal": "^0.5.0",
 		"md5": "^2.2.1",
 		"put-after": "^2.0.0"
 	},

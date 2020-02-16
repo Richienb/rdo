@@ -2607,10 +2607,10 @@ kind-of@^6.0.0, kind-of@^6.0.2:
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-6.0.3.tgz#07c05034a6c349fa06e24fa35aa76db4580ce4dd"
   integrity sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw==
 
-ky-universal@^0.4.0:
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/ky-universal/-/ky-universal-0.4.0.tgz#c764e0a5dfffe8552840cd796e2dc4d84e991c4c"
-  integrity sha512-nKKjiRq88tvs6BLHN2O6lfydsLSP4mKoPLITxfchCl/Z1kNGUMedCZ8sxxljeXG3XhUGF5a4dKwv+bHcZ/oDHA==
+ky-universal@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/ky-universal/-/ky-universal-0.5.0.tgz#16d5fe881fb98e54732a4f0b7d531d44cbf701cb"
+  integrity sha512-O+0wjCua5i45lYBZrBy8TyRDRVodtsmzVC/MlE5FN7ZMFu/Icz7ekbZ85sdFw0F/JwGhXZTaKjXq9IgUGwGedQ==
   dependencies:
     abort-controller "^3.0.0"
     node-fetch "^2.6.0"
