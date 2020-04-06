@@ -33,7 +33,7 @@
 		"cross-blob-util": "^1.0.0",
 		"english-chars": "^1.0.1",
 		"is-uuid": "^1.0.2",
-		"ky": "^0.17.0",
+		"ky": "^0.19.0",
 		"ky-universal": "^0.4.0",
 		"md5": "^2.2.1",
 		"put-after": "^2.0.0"
