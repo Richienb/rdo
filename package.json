@@ -1,17 +1,21 @@
 {
 	"name": "rdo",
 	"version": "0.0.0",
+	"type": "module",
 	"description": "Random.org API client library for JavaScript.",
 	"repository": "https://github.com/Richienb/rdo.git",
 	"author": "Richie Bendall <richiebendall@gmail.com>",
 	"license": "MIT",
 	"main": "dist/index.js",
 	"files": [
-		"src/**/*",
-		"dist/**/*"
+		"dist"
 	],
+	"exports": {
+		".": "./dist/index.js",
+		"./public": "./dist/public.js"
+	},
 	"engines": {
-		"node": ">=18"
+		"node": ">=24"
 	},
 	"scripts": {
 		"build": "tsc && typedoc",
@@ -23,8 +27,5 @@
 		"api",
 		"client",
 		"random.org"
-	],
-	"dependencies": {
-		"ky": "^1.8.1"
-	}
+	]
 }

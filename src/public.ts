@@ -1,85 +1,139 @@
-import ky from 'ky';
+type Base = 2 | 8 | 10 | 16;
+type Rnd = 'new' | `id.${string}` | `${number}-${number}-${number}`;
 
-// TODO: Allow providing additional ky options
-async function request(method: string, options: { params?: Record<string, string | number>, parseNumber: true }): Promise<number[]>
-async function request(method: string, options: { params?: Record<string, string | number>, parseNumber: false }): Promise<string[]>
-async function request(method: string, options: { params?: Record<string, string | number>, parseNumber?: boolean }): Promise<number[] | string[]>
-async function request(method: string, { params, parseNumber = false }: { params?: Record<string, string | number>, parseNumber?: boolean }) {
-	const response = await ky(method, {
-		prefixUrl: "https://www.random.org/",
-		searchParams: {
-			format: "plain",
-			...params,
-		},
-	}).text()
+type IntegerOptions = {
+	num: number;
+	min: number;
+	max: number;
+	base?: Base;
+	rnd?: Rnd;
+};
 
-	const result = response.split("\n").slice(0, -1)
+type SequenceOptions = {
+	min: number;
+	max: number;
+	rnd?: Rnd;
+};
 
-	if (parseNumber) {
-		return result.map((val: string) => Number(val))
+type StringOptions = {
+	num: number;
+	len: number;
+	digits?: boolean;
+	upperalpha?: boolean;
+	loweralpha?: boolean;
+	unique?: boolean;
+	rnd?: Rnd;
+};
+
+type QuotaOptions = {
+	ip?: string;
+};
+
+function composeRequest(method: string, payload: Record<string, string | number | boolean>): Request {
+	const url = `https://www.random.org/${method}/`;
+
+	const params = new URLSearchParams({
+		format: 'plain',
+	});
+
+	for (const [key, value] of Object.entries(payload)) {
+		if (value !== undefined) {
+			const normalized = typeof value === 'boolean'
+				? (value ? 'on' : 'off')
+				: value;
+
+			params.append(key, normalized.toString());
+		}
 	}
 
-	return result
+	return new Request(`${url}?${params.toString()}`);
 }
 
-export async function randomIntegers(options: { num: number, min: number, max: number, base?: 10, rnd?: 'new' | string | 'today' | 'yesterday'}): Promise<number[]>
-export async function randomIntegers(options: { num: number, min: number, max: number, base?: 2 | 8 | 16, rnd?: 'new' | string | 'today' | 'yesterday'}): Promise<string[]>
-export async function randomIntegers(options: { num: number, min: number, max: number, base?: 2 | 8 | 10 | 16, rnd?: 'new' | string | 'today' | 'yesterday'}): Promise<number[] | string[]> {
-	options  = {
-		base: 10,
-		rnd: 'new',
-		...options,
-	};
+/**
+@example
+```
+import {composeIntegerRequest, parseNumericalResponse} from 'rdo/public';
 
-	return request("integers", {
-		params: options,
-		parseNumber: options.base == 10,
-	});
+const response = await fetch(composeIntegerRequest({
+	num: 5,
+	min: 1,
+	max: 3,
+}))
+
+const result = parseNumericalResponse(await response.text());
+//=> [3, 1, 3, 2, 1]
+```
+*/
+export function composeIntegerRequest(options: IntegerOptions): Request {
+	return composeRequest('integers', { base: 10, col: 1, ...options });
 }
 
-export async function randomSequence(options: { min: number, max: number, rnd?: 'new' | string | 'today' | 'yesterday' }): Promise<number[]> {
-	options = {
-		rnd: 'new',
-		...options,
-	};
+/**
+@example
+```
+import {composeSequenceRequest, parseNumericalResponse} from 'rdo/public';
 
-	return await request("sequence", {
-		params: options,
-		parseNumber: true,
-	});
+const response = await fetch(composeSequenceRequest({
+	min: 1,
+	max: 5,
+}))
+
+const result = parseNumericalResponse(await response.text());
+//=> [4, 5, 2, 3, 1]
+```
+*/
+export function composeSequenceRequest(options: SequenceOptions): Request {
+	return composeRequest('sequences', { col: 1, ...options });
 }
 
-export async function randomStrings(options: {
-	num: number,
-	len: number,
-	digits?: 'on' | 'off',
-	upperalpha?: 'on' | 'off',
-	loweralpha?: 'on' | 'off',
-	unique?: 'on' | 'off',
-	format?: 'html' | 'plain',
-	rnd?: 'new' | string
-}): Promise<string[]> {
-	options = {
-		digits: 'off',
-		upperalpha: 'off',
-		loweralpha: 'off',
-		unique: 'off',
-		format: 'plain',
-		rnd: 'new',
-		...options,
-	};
+/**
+@example
+```
+import {composeStringRequest, parseTextResponse} from 'rdo/public';
 
-	return request("strings", {
-		params: options,
-		parseNumber: false,
-	});
+const response = await fetch(composeStringRequest({
+	num: 1,
+	len: 5,
+	loweralpha: true,
+}));
+
+const result = parseTextResponse(await response.text());
+//=> ['giwnx']
+```
+*/
+export function composeStringRequest(options: StringOptions): Request {
+	return composeRequest('strings', options);
 }
 
-export async function getQuota(ip?: string): Promise<number> {
-	const result = await request("quota", {
-		params: {ip},
-		parseNumber: true,
-	});
+/**
+@example
+```
+import {composeQuotaRequest, parseQuotaResponse} from 'rdo/public';
 
-	return result[0];
+const response = await fetch(composeQuotaRequest())
+
+const result = parseQuotaResponse(await response.text());
+//=> 974610
+```
+*/
+export function composeQuotaRequest(options: QuotaOptions = {}): Request {
+	return composeRequest('quota', options);
+}
+
+export function parseTextResponse(response: string): string[] {
+	const parsed = response.split('\n');
+
+	parsed.pop();
+
+	return parsed;
+}
+
+export function parseNumericalResponse(response: string): number[] {
+	const parsedText = parseTextResponse(response);
+
+	return parsedText.map(value => Number(value));
+}
+
+export function parseQuotaResponse(response: string): number {
+	return Number.parseInt(response)
 }
