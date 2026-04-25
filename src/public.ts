@@ -29,7 +29,7 @@ type QuotaOptions = {
 	ip?: string;
 };
 
-function composeRequest(method: string, payload: Record<string, string | number | boolean>): Request {
+function composeRequest(method: string, payload: Record<string, string | number | boolean> = {}): Request {
 	const url = `https://www.random.org/${method}/`;
 
 	const params = new URLSearchParams({
@@ -116,7 +116,7 @@ const result = parseQuotaResponse(await response.text());
 //=> 974610
 ```
 */
-export function composeQuotaRequest(options: QuotaOptions = {}): Request {
+export function composeQuotaRequest(options?: QuotaOptions): Request {
 	return composeRequest('quota', options);
 }
 
@@ -135,5 +135,41 @@ export function parseNumericalResponse(response: string): number[] {
 }
 
 export function parseQuotaResponse(response: string): number {
-	return Number.parseInt(response)
+	return Number.parseInt(response);
+}
+
+async function makeRequest(request: Request) {
+	const response = await fetch(request);
+
+	const result = await response.text();
+
+	if (response.status === 503) {
+		throw new Error(result);
+	}
+
+	return result;
+}
+
+export async function randomIntegers(options: IntegerOptions): Promise<number[]> {
+	const response = await makeRequest(composeIntegerRequest(options));
+
+	return parseNumericalResponse(response);
+}
+
+export async function randomSequence(options: SequenceOptions): Promise<number[]> {
+	const response = await makeRequest(composeSequenceRequest(options));
+
+	return parseNumericalResponse(response);
+}
+
+export async function randomStrings(options: StringOptions): Promise<string[]> {
+	const response = await makeRequest(composeStringRequest(options));
+
+	return parseTextResponse(response);
+}
+
+export async function randomQuota(options?: QuotaOptions): Promise<number> {
+	const response = await makeRequest(composeQuotaRequest(options));
+
+	const result = parseQuotaResponse(response);
 }
