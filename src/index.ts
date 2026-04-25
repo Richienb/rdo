@@ -48,3 +48,26 @@ export function parseResponse<ResponseType = unknown>(response: unknown): Respon
 
 	return result;
 }
+
+type BaseOptions = {
+  apiKey: string;
+};
+
+type PregeneratedRandomization = {
+  date: `${number}-${number}-${number}`;
+} | {
+  id: string;
+};
+
+type IntegerOptions = BaseOptions & {
+  n: number;
+  min: number;
+  max: number;
+  replacement?: boolean;
+  base?: 2 | 8 | 10 | 16;
+  pregeneratedRandomization?: PregeneratedRandomization;
+};
+
+export function composeIntegerRequest(options: IntegerOptions) {
+	return composeRequest('generateIntegers', options);
+}
